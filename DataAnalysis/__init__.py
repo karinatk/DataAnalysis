@@ -60,16 +60,19 @@ class PreProcessing:
         return self.remove(message = message, regex_pattern = r'[A-Za-z]+\d+\w*|[\d@]+[A-Za-z]+[\w@]*', use_tagging = tagging, tag_name = 'CODE')
     
     def remove_dates(self, message, tagging):
-        return self.remove(message = message, regex_pattern = r'[0-3]{1,2}[/-//]\d{1,2}[/-//]\d{2,4}', use_tagging = tagging, tag_name = 'DATE')
+        return self.remove(message = message, regex_pattern = r'(\d{1,2}[/-//]\d{1,2})([/-//]\d{2,4})?', use_tagging = tagging, tag_name = 'DATE')
     
+    def remove_cpf(self, message, tagging):
+        return self.remove(message = message, regex_pattern = r'\d{3}\.\d{3}\.\d{3}-\d{2}', use_tagging = tagging, tag_name = 'CPF')
+        
     def remove_time(self, message, tagging):
-        return self.remove(message = message, regex_pattern = r'(([0-9]|[01]\d|2[0-3]):([0-5]\d)|24:00)$', use_tagging = tagging, tag_name = 'TIME')
+        return self.remove(message = message, regex_pattern = r'\d{1,2}(:|h(rs)?)(\d{1,2}(min)?)?', use_tagging = tagging, tag_name = 'TIME')
     
     def remove_emails(self, message, tagging):
         return self.remove(message = message, regex_pattern = r'[^\s]+@[^\s]+', use_tagging = tagging, tag_name = 'EMAIL')
     
     def remove_money(self, message, tagging):
-        return self.remove(message = message, regex_pattern = r'((R[S$])\s?\d+[,.]?\d*)|(\d+(.\d{3})+,\d{2})', use_tagging = tagging, tag_name = 'MONEY')
+        return self.remove(message = message, regex_pattern = r'(R[S$])\d+(\.\d{3})*(,\d{2})?', use_tagging = tagging, tag_name = 'MONEY')
         
     def remove_url(self, message, tagging):
         return self.remove(message = message, regex_pattern = r'(http|https)://[^\s]+', use_tagging = tagging, tag_name = 'URL')
@@ -161,7 +164,7 @@ class PreProcessing:
             return cleaned_sentences
 
 
-    def process(self, output_file, lower = True, punctuation = True, abbreviation = True, typo = True, small_talk = True, emoji = True, wa_emoji = True, accentuation = True, number = True, relevant = False, url = True, email = True, money = True, code = True, time = True, date = True, tagging = True):
+    def process(self, output_file, lower = True, punctuation = True, abbreviation = True, typo = True, small_talk = True, emoji = True, wa_emoji = True, accentuation = True, number = True, relevant = False, cpf = True, url = True, email = True, money = True, code = True, time = True, date = True, tagging = True):
         
         data_processed = pd.DataFrame({'Content': self.text, 'Processed Content': self.text})
         if self.id is not None:
@@ -173,6 +176,7 @@ class PreProcessing:
         if abbreviation: data_processed['Processed Content'] = data_processed['Processed Content'].apply(self.use_dictionary, file_dict = self.typo_dict)
         if typo: data_processed['Processed Content'] = data_processed['Processed Content'].apply(self.use_dictionary, file_dict = self.abbreviations_dict)
         if email: data_processed['Processed Content'] = data_processed['Processed Content'].apply(self.remove_emails, args=(tagging,))
+        if cpf: data_processed['Processed Content'] = data_processed['Processed Content'].apply(self.remove_cpf, args=(tagging,))
         if money: data_processed['Processed Content'] = data_processed['Processed Content'].apply(self.remove_money, args=(tagging,))
         if date: data_processed['Processed Content'] = data_processed['Processed Content'].apply(self.remove_dates, args=(tagging,))
         if url: data_processed['Processed Content'] = data_processed['Processed Content'].apply(self.remove_url, args=(tagging,))

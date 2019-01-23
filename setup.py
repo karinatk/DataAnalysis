@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="DataAnalysis",
-    version="0.0.1",
+    version="0.0.4",
     author="Karina Tiemi Kato, Renan Santos Mendes",
     author_email="karinatkato@gmail.com",
     description="Pacote de pré-processamento de texto",

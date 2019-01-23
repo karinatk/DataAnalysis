@@ -33,8 +33,9 @@ pip install DataAnalysis
 import DataAnalysis as da
 
 p = da.PreProcessing(input_file, api_small_talks, content_column, encoding, sep, batch)
-p.process(output_file, lower = True, punctuation = True, abbreviation = True, typo = True, small_talk = True, 
-emojis = True, wa_emojis = True, accentuation = True, number = True, relevant = False)
+p.process(output_file, lower = True, punctuation = True, abbreviation = True, typo = True, small_talk = True,
+emoji = True, wa_emoji = True, accentuation = True, number = True, relevant = False, cpf = True,
+url = True, email = True, money = True, code = True, time = True, date = True, tagging = True)
 ```
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
